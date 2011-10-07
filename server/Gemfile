@@ -8,7 +8,7 @@ gem 'rails', '3.1.0'
 gem 'sqlite3'
 gem 'pg'
 gem 'sass-rails', "  ~> 3.1.0"
-gem 'activeadmin'
+gem 'activeadmin', :git => 'git://github.com/pphetra/active_admin.git'
 gem "meta_search",    '>= 1.1.0.pre'
 gem 'therubyracer'
 #gem "ruby-debug19"
