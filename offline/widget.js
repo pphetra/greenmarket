@@ -1,5 +1,57 @@
 Ext.ns('form');
 
+
+form.StandardField = Ext.extend(Ext.form.Field, {
+    renderTpl: [
+        '<tpl if="label">',
+            '<div class="x-form-label"><span>{label}</span></div>',
+        '</tpl>',
+        '<tpl if="fieldEl">',
+            '<div class="x-form-field-container">',
+                '<a href="#" class="szoom"><img class="logo" src=""></img></a>',
+                '<span class="info"></span>',
+            '</div>',
+            '<tpl if="useClearIcon"><div class="x-field-clear-container"><div class="x-field-clear x-hidden-visibility">&#215;</div></div></tpl>',
+        '</tpl>'
+    ],
+
+    listeners: {
+        afterrender: function() {
+            this.mon(this.el,
+                'singletap',
+                this.zoomFn,
+                this,
+                {delegate: '.szoom'}
+            );
+        }
+    },
+
+    setValue: function(value) {
+        this.value = value;
+        return this;
+    },
+
+    showStandard: function(standard) {
+        this.standard = standard;
+        this.hideInfo();
+        var el = this.getEl();
+        el.down('.logo').set({
+            src: standard.get('logo')
+        });
+    },
+    showInfo: function() {
+        var el = this.getEl();
+        el.down('.info').setHTML(this.standard.get('description'));
+    },
+    hideInfo: function() {
+        var el = this.getEl();
+        el.down('.info').setHTML('');
+    }
+});
+
+
+Ext.reg('standardfield', form.StandardField);
+
 form.DisplayField = Ext.extend(Ext.form.Field,  {
     zoomable: false,
     renderTpl: [

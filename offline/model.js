@@ -18,9 +18,9 @@ categoryStore = new Ext.data.Store({
 
 
 Ext.regModel('Product', {
-    fields: ['id', 'code', 'name', 'description', 
-        'imagePath', 'categoryId', 'supplierId', 
-        'supplierName', 'standardId', 'standardName'],
+    fields: ['id', 'code', 'name', 'description',
+        'imagePath', 'categoryId', 'supplierId',
+        'supplierName', 'standardId'],
     proxy: {
         type: 'memory',
         reader: {
@@ -44,12 +44,20 @@ supplyProductStore = new Ext.data.Store({
     data: productData
 });
 
+standardProductStore = new Ext.data.Store({
+    model: 'Product',
+    sorters:'name',
+    autoLoad: true,
+    data: productData
+});
+
 
 Ext.regModel('Standard', {
     fields: [
         'id',
         'name',
-        'description'
+        'description',
+        'logo'
     ],
     proxy: {
         type: 'memory',
@@ -62,7 +70,7 @@ Ext.regModel('Standard', {
 
 standardStore = new Ext.data.Store({
     model: 'Standard',
-    sorters: 'name',
+    sorters: 'id',
     autoLoad: true,
     data: standardData
 })

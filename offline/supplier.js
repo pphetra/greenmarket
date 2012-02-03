@@ -39,10 +39,8 @@ supplyProductPanel = new Ext.Panel({
             itemTpl: '<div class="category">{name}</div>',
             store: supplyProductStore,
             onItemDisclosure : function(record) {
-                supplierPanel.setActiveItem(supplyProductDetail);
-                supplyProductDetail.loadRecord(record);
-                supplyProductDetail.currentRecord = record;
                 supplyProductPanel.hide();
+                productPopup.showRecord(record, supplierPanel);
             }
         }
     ]
@@ -58,7 +56,7 @@ supplyProductDetail = new Ext.form.FormPanel({
             items: [
                 {
                     ui: 'back',
-                    text: 'Back',
+                    text: 'back',
                     handler: function() {
                         supplierPanel.setActiveItem(supplierDetail);
                         supplyProductPanel.showBy(supplierDetail.down('#supplyProductBtn'));
@@ -77,7 +75,7 @@ supplyProductDetail = new Ext.form.FormPanel({
             xtype: 'displayArea',
             name: 'description',
             label: 'Description',
-            maxRows: 20
+            maxRows: 10
         },
         {
             xtype: 'displayfield',
@@ -86,8 +84,9 @@ supplyProductDetail = new Ext.form.FormPanel({
             style: 'background: white'
         },
         {
-            xtype: 'displayfield',
-            name: 'standardName',
+            xtype: 'standardfield',
+            name: 'standardId',
+            itemId: 'standardField',
             zoomable: true,
             style: 'background: white;',
             zoomFn: function() {
@@ -122,15 +121,17 @@ supplierDetail = new Ext.form.FormPanel({
                                 type: 'slide',
                                 direction: 'right'
                             });
-                            tmp.tabItem.pop(tmp.record);
+                            if (tmp.record) {
+                                tmp.tabItem.pop(tmp.record);
+                            }
 
                         } else {
                             supplierPanel.layout.prev({
                                 type: 'slide',
                                 direction: 'right'
-                            });                            
+                            });
                         }
-                    }                    
+                    }
                 },
                 {
                     xtype: 'spacer'
@@ -166,7 +167,9 @@ supplierDetail = new Ext.form.FormPanel({
 
 supplierPanel = new Ext.Panel({
     title: 'ผู้ผลิต',
+    iconCls  : 'team',
     layout: 'card',
+    readyToReset: false,
     items: [
         supplierListPanel,
         supplierDetail,
@@ -182,17 +185,30 @@ supplierPanel = new Ext.Panel({
 
         this.setActiveItem(supplierDetail);
         app.viewport.programSwitch = false;
-        
+
         var record = supplierStore.getById(id);
-        
+
         this.setSupplier(record);
 
+    },
+
+    listeners: {
+        afterrender : function() {
+            supplierPanel.readyToReset = true;
+        }
     },
 
     setSupplier: function(record) {
         supplierDetail.down('toolbar').setTitle(record.get('name'));
         supplierDetail.loadRecord(record);
         supplierDetail.currentRecord = record;
+    },
+
+    reset: function() {
+        if (this.readyToReset) {
+            console.log('hi');
+            this.setActiveItem(supplierListPanel);
+        }
     }
 
 });

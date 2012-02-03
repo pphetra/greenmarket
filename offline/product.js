@@ -35,8 +35,8 @@ standardPopup = new Ext.Panel({
     modal: true,
     floating: true,
     centered: true,
-    width: 300,
-    height: 200,
+    width: 500,
+    height: 400,
     styleHtmlContent: true,
     html: 'show me',
     dockedItems: [
@@ -65,7 +65,7 @@ productForm = new Ext.form.FormPanel({
             xtype: 'displayArea',
             name: 'description',
             label: 'Description',
-            maxRows: 20
+            maxRows: 10
         },
         {
             xtype: 'displayfield',
@@ -82,8 +82,9 @@ productForm = new Ext.form.FormPanel({
             }
         },
         {
-            xtype: 'displayfield',
-            name: 'standardName',
+            xtype: 'standardfield',
+            name: 'standardId',
+            itemId: 'standardField',
             zoomable: true,
             style: 'background: white;',
             zoomFn: function() {
@@ -107,12 +108,14 @@ productForm = new Ext.form.FormPanel({
             });
         } else {
             Ext.Anim.run(this, 'fade', {
-                out: false  
+                out: false
             })
         }
 
         this.currentRecord = r;
         this.loadRecord(r);
+        var standard = standardStore.getById(r.get('standardId'));
+        this.down('#standardField').showStandard(standard);
         this.down('#imageField').loadImage(r.get('imagePath'));
 
         this.scroller.scrollTo({
@@ -132,13 +135,13 @@ productDetailPanel = new Ext.Panel({
             items: [
                 {
                     ui: 'back',
-                    text: 'Back',
+                    text: 'กลุ่มสินค้า',
                     handler: function () {
                         productPanel.layout.prev({
                             type: 'slide',
                             direction: 'right'
                         });
-                    }                    
+                    }
                 }
             ]
         },
@@ -182,6 +185,7 @@ productDetailPanel = new Ext.Panel({
 productPanel = new Ext.Panel({
     title: 'สินค้า',
     layout: 'card',
+    iconCls: 'search',
     items: [
         categoryPanel,
         productDetailPanel
@@ -198,4 +202,78 @@ productPanel = new Ext.Panel({
             productForm.display(record);
         }
     }
+
+    ,
+    reset: function() {
+        this.setActiveItem(categoryPanel);
+    }
 });
+
+productPopup = new Ext.form.FormPanel({
+    floating: true,
+    modal: true,
+    centered: true,
+    width: 1000,
+    height: 800,
+    scroll: 'vertical',
+    items: [
+        {
+            xtype: 'displayfield',
+            name: 'name',
+            label: 'Name'
+        },
+        {
+            xtype: 'displayArea',
+            name: 'description',
+            label: 'Description',
+            maxRows: 5
+        },
+        {
+            xtype: 'displayfield',
+            name: 'supplierName',
+            label: 'Company',
+            itemId: 'supplierField',
+            zoomable: true,
+            style: 'background: white',
+            zoomFn: function() {
+                var record = productPopup.currentRecord;
+                var supplierId = record.get('supplierId');
+
+                productPopup.hide();
+                popStack.push(productPopup.from, productPopup.currentRecord);
+                supplierPanel.display(supplierId);
+            }
+        },
+        {
+            xtype: 'standardfield',
+            name: 'standardId',
+            itemId: 'popupstandardField',
+            zoomable: true,
+            style: 'background: white;',
+            zoomFn: function() {
+                productPopup.down('#popupstandardField').showInfo();
+            },
+            label: 'Standard'
+        },
+        {
+            xtype: 'imagefield',
+            itemId: 'popupimageField',
+            height: 500
+        }
+    ],
+    showRecord: function(r, from) {
+        productPopup.setHeight(app.viewport.getHeight() * 0.80);
+        productPopup.show();
+        this.from = from;
+        this.down('#supplierField').el.down('.zoomable').show();
+        this.currentRecord = r;
+        this.loadRecord(r);
+        var standard = standardStore.getById(r.get('standardId'));
+        this.down('#popupstandardField').showStandard(standard);
+        this.down('#popupimageField').loadImage(r.get('imagePath'));
+
+        if (from === supplierPanel) {
+            this.down('#supplierField').el.down('.zoomable').hide();
+        }
+    }
+})

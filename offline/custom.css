@@ -24,4 +24,26 @@
     float:;
 }
 
+.watermark {
+    background: white url(/images/watermark.png) no-repeat 350px 100px;
+    background-position: bottom right;
+}
+
+.category img.logo {
+    width: 75px;
+}
+.category .name {
+    margin-bottom: 50px;
+    position: absolute;
+    top: 50;
+    margin-left: 20;
+}
+
+.category .x-list-disclosure {
+    margin-top: 40;
+}
+
+.info {
+    display: block;
+    padding: 5px;
 }
